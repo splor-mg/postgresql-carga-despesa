@@ -1,0 +1,6 @@
+# requirement.txt
+# Run pip install -r requirements.txt
+
+pandas==1.5.2
+ckanapi==4.04.0
+SQLAlchemy==2.0.11
