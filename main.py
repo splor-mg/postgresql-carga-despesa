@@ -62,6 +62,7 @@ def append_from_csv(file_paths_append, tbl_agg_name):
     num_linhas = 0
     exec_error = False
     files_error = []
+    postgres_engine = create_engine(f"postgresql+psycopg2://postgres:postgres@localhost/{DB_NAME}")
 
     for file in file_paths_append:
         _, tail = os.path.split(file)
@@ -71,7 +72,7 @@ def append_from_csv(file_paths_append, tbl_agg_name):
         df = pd.read_csv(file, delimiter=';', decimal='.')
 
         try:
-            df.to_sql(tbl_agg_name, con, if_exists='append', index=False)  # if_exists{‘fail’, ‘replace’, ‘append’}, default ‘fail’
+            df.to_sql(tbl_agg_name, postgres_engine, if_exists='append', index=False)  # if_exists{‘fail’, ‘replace’, ‘append’}, default ‘fail’
             print(f"Arquivo {file} concatenado na tabela {tbl_agg_name}\n")
             num_linhas += len(df)
         except:
@@ -104,20 +105,31 @@ def show_tables(con=None):
     else:
         print(f"Não há tabelas na database {DB_NAME}")
 
+    cur.close()
+
+def create_database(database_name, con):
+    cur = con.cursor()
+    cur.execute(f"SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{database_name}'")
+    exists = cur.fetchone()
+
+    if not exists:
+        cur.execute(f"CREATE DATABASE {database_name}")
 
 if __name__ == '__main__':
     con = psycopg2.connect("user=postgres password=postgres")
-    cur = con.cursor()  # cursor para realizar consultas (mais otimizado que usar con)
+    con.autocommit = True  #evitar
 
     show_tables(con)
+
+    create_database(DB_NAME, con)
 
     if DROP_TABLES:
         drop_tables(con)
 
-    tables_from_csv(file_paths, con)
+    #tables_from_csv(file_paths, con)
     #
-    # append_from_csv(file_paths_desp, 'dm_empenho_desp')
-    # append_from_csv(file_paths_ft, 'ft_despesa')
+    append_from_csv(file_paths_desp, 'dm_empenho_desp')
+    append_from_csv(file_paths_ft, 'ft_despesa')
 
     con.commit()
     con.close()
