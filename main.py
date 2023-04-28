@@ -3,6 +3,7 @@ import glob
 import os
 import psycopg2
 from sqlalchemy import create_engine
+import time
 
 DB_NAME = 'dadosmg'
 DATASETS_DIR = 'despesa/'
@@ -25,7 +26,12 @@ DROP_TABLES = True
 
 
 def drop_tables(con=None):
+    """
+        Drop all tables from a database.
 
+        :param con: connection object to the database.
+        :return: none.
+    """
     cur = con.cursor()
     cur.execute("""
         SELECT table_name 
@@ -35,13 +41,21 @@ def drop_tables(con=None):
 
     if res:
         for table_name in res:
-            con.execute(f"""DROP TABLE '{table_name[0]}' """)
+            cur.execute(f"""DROP TABLE {table_name[0]} """)
             print(f"Tabela {table_name} apagada.")
     else:
         print(f"Não há tabelas em {DB_NAME}")
 
+    con.commit()
 
 def tables_from_csv(file_paths, con):
+    """
+        Reads csv files and create one table with them.
+
+        :param file_paths: list of complete paths to each csv file.
+        :param con: connection object to the database.
+        :return: none.
+    """
 
     postgres_engine = create_engine(f"postgresql+psycopg2://postgres:postgres@localhost/{DB_NAME}")
 
@@ -51,6 +65,7 @@ def tables_from_csv(file_paths, con):
 
         df = pd.read_csv(file, delimiter=';', decimal='.')
 
+
         # if_exists{‘fail’, ‘replace’, ‘append’}, default ‘fail’
         df.to_sql(table_name, postgres_engine, if_exists='replace', index=False, )
         print(f"Arquivo {file} carregado para tabela {table_name}")
@@ -58,6 +73,14 @@ def tables_from_csv(file_paths, con):
     print('-------------------------------------------------------\n')
 
 def append_from_csv(file_paths_append, tbl_agg_name):
+    """
+        Reads csv files and append in the same table.
+
+        :param file_paths_append: list of complete paths to each csv file.
+        :param tbl_agg_name: name of the table that will be created and the data appended
+        :return: none.
+    """
+
     df_agg = pd.DataFrame()
     num_linhas = 0
     exec_error = False
@@ -92,6 +115,12 @@ def append_from_csv(file_paths_append, tbl_agg_name):
 
 
 def show_tables(con=None):
+    """
+        Show all tables from a database.
+
+        :param con: connection object to the database.
+        :return: none.
+    """
 
     cur = con.cursor()
     cur.execute("""
@@ -105,9 +134,19 @@ def show_tables(con=None):
     else:
         print(f"Não há tabelas na database {DB_NAME}")
 
+
     cur.close()
 
-def create_database(database_name, con):
+
+def create_database(database_name):
+    """
+        Creates a database with the given name, if not exists already.
+
+        :param database_name: Name of the database to be created.
+        :return: none.
+    """
+    con = psycopg2.connect("user=postgres password=postgres")
+    con.autocommit = True
     cur = con.cursor()
     cur.execute(f"SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{database_name}'")
     exists = cur.fetchone()
@@ -115,22 +154,32 @@ def create_database(database_name, con):
     if not exists:
         cur.execute(f"CREATE DATABASE {database_name}")
 
+    con.autocommit = False
+    cur.close()
+    con.close()
+
 if __name__ == '__main__':
-    con = psycopg2.connect("user=postgres password=postgres")
-    con.autocommit = True  #evitar
+
+    start_time = time.time()
+
+    create_database(DB_NAME)
+
+    con = psycopg2.connect(user="postgres",
+                         password="postgres",
+                         database=DB_NAME)
+    con.autocommit
 
     show_tables(con)
-
-    create_database(DB_NAME, con)
 
     if DROP_TABLES:
         drop_tables(con)
 
-    #tables_from_csv(file_paths, con)
-    #
+    tables_from_csv(file_paths, con)
+
     append_from_csv(file_paths_desp, 'dm_empenho_desp')
     append_from_csv(file_paths_ft, 'ft_despesa')
 
-    con.commit()
-    con.close()
 
+    end_time = time.time()
+
+    print(f"Tempo Total de execução: {end_time - start_time} ")
