@@ -1,12 +1,13 @@
 import numpy as np
 import os
+import pandas as pd
 
 FRICT_TO_DTYPES = {
     'string': object
     ,
     'number': np.float64
     ,
-    'integer': np.int64
+    'integer': 'Int64'
     ,
     'boolean': bool
     ,
@@ -14,11 +15,11 @@ FRICT_TO_DTYPES = {
     ,
     'object': object
     ,
-    'datetime': np.datetime64[ns]
+    'datetime': 'datetime64[ns]'
     ,
-    'date': np.datetime64
+    'date': 'datetime64[ns]'
     ,
-    'time': np.datetime64
+    'time': 'datetime64[ns]'
     ,
     'geopoint': object
     ,

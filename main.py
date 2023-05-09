@@ -87,12 +87,13 @@ def tables_from_csv(package, connection_string):
 
         #resource = package.get_resource(name)
         file = remove_path_redundancies(resource)
+        print(f"Lendo {file}")
         df = pd.read_csv(file, delimiter=';', decimal='.')
         df = dtypes_from_datapackage(resource, df)
 
         # if_exists{‘fail’, ‘replace’, ‘append’}, default ‘fail’
         df.to_sql(resource.name, conn, if_exists='replace', index=False, )
-        print(f"Arquivo {file} carregado para tabela {resource.name}")
+        print(f"Arquivo {file} carregado para tabela {resource.name}\n")
         conn.commit()
 
     print('-------------------------------------------------------\n')
