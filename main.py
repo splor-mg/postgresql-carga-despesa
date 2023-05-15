@@ -13,9 +13,6 @@ DATASET_DIR = 'datasets/'
 DATA_DIR = 'data/'
 DATA_PATH = DATASET_DIR + DATASETS_DIR + DATA_DIR
 
-# obtem lista de paths para arquivos CSV localizados no caminho DATA_PATH
-file_paths = [i.replace('\\', '/') for i in list(glob.iglob(f'{DATA_PATH}*.csv*'))]
-
 
 
 # True Dropa todas as tabelas atuais da database

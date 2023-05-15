@@ -6,7 +6,5 @@ download:
 run:
 	@python main.py
 
-all:
-	@ckanapi dump datasets --remote https://dados.mg.gov.br/ --datapackages=datasets despesa
-	@python main.py
+all: download run 
 	
