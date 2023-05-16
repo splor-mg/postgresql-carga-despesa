@@ -1,4 +1,4 @@
-# Pipeline Postgres
+# ETL Postgres
 
 Extração do [conjunto da despesa](https://dados.mg.gov.br/dataset/despesa) e carga no PostgreSQL.
 
