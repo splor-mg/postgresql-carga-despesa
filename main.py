@@ -53,7 +53,7 @@ def create_database(database_name):
         :param database_name: Name of the database to be created.
         :return: none.
     """
-    con = psycopg2.connect("user=postgres password=postgres")
+    con = psycopg2.connect("user=postgres password=postgres host=localhost")
     con.autocommit = True # To avoid the need of rollbacks
     cur = con.cursor()
     cur.execute(f"SELECT 1 FROM pg_catalog.pg_database WHERE datname = '{database_name}'")
@@ -179,6 +179,7 @@ if __name__ == '__main__':
 
     con = psycopg2.connect(user="postgres",
                          password="postgres",
+                         host="localhost",
                          database=DB_NAME)
 
     connection_string = f"postgresql+psycopg2://postgres:postgres@localhost/{DB_NAME}"
