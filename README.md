@@ -8,7 +8,7 @@ Extração do [conjunto da despesa](https://dados.mg.gov.br/dataset/despesa) e c
 
 ## Uso
 
-O arquivo `docker-compose.yml` está configurado para levantar o [PostgreSQL](https://www.postgresql.org/) (usuário: postgres; senha: postgres) e [pgAdmin](https://www.pgadmin.org/) (usuário: splor@planejamento.mg.gov.br; senha: admin). Para isso execute na linha de comando
+O arquivo `docker-compose.yml` está configurado para levantar o [PostgreSQL](https://www.postgresql.org/) (usuário: postgres; senha: postgres) e [pgAdmin](https://www.pgadmin.org/) (usuário: splor@planejamento.mg.gov.br; senha: admin). Para isso execute na linha de comando (depois de abrir o Docker Desktop)
 
 ```bash
 docker compose up
