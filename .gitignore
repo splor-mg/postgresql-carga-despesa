@@ -1,0 +1,11 @@
+database/*.*
+!database/.*
+!database/
+datasets/*
+!datasets/
+*.*backup
+venv/
+.git
+.ipynb_checkpoints
+.idea
+__pycache__/

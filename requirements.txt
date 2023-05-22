@@ -1,0 +1,8 @@
+# requirement.txt
+# Run pip install -r requirements.txt
+
+pandas==1.5.2
+ckanapi==4.0
+SQLAlchemy==2.0.11
+psycopg2-binary==2.9.6
+frictionless==5.13.1
